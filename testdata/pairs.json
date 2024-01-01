@@ -1,0 +1,7 @@
+{
+	"pairs": [
+		{"in":"testowy string", "out":"testowy-string"},
+		{"in":"To jest (dyskretny!) problem z %-ami?!", "out":"to-jest-dyskretny-problem-z-ami"},
+		{"in":" Polskie Archiwum X #94: Ukrył szczątki ojca w słoiku. Finał sprawy zaskakuje ", "out":"polskie-archiwum-x-94-ukryl-szczatki-ojca-w-sloiku-final-sprawy-zaskakuje"}
+	]
+}

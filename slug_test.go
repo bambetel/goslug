@@ -1,24 +1,42 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
 	"regexp"
 	"testing"
 )
 
 var reValidSlug *regexp.Regexp
 
+type TestPair struct {
+	In  string `json:"in"`
+	Out string `json:"out"`
+}
+type TestPairs struct {
+	Pairs []TestPair `json:"pairs"`
+}
+
+var pairs TestPairs
+
 func init() {
 	reValidSlug = regexp.MustCompile(`^([A-Za-z0-9\-\+.]*|\%[0-9A-F]{2,2})*$`)
+	fJsonPairs, err := os.ReadFile("testdata/pairs.json")
+	if err != nil {
+		_ = fmt.Errorf("Cannot load test data: pairs.json")
+	}
+	json.Unmarshal(fJsonPairs, &pairs)
+
+	// fmt.Printf("test file data:  %q", pairs)
 }
 
 func TestSlug(t *testing.T) {
-	s1 := "Tytuł artykułu (po polsku) z ok. 12% błędnych znaków"
-	s2 := "tytul-artykulu-po-polsku-z-ok-12-blednych-znakow"
-	got := slug(s1)
-	want := s2
-
-	if got != want {
-		t.Errorf("result invalid TODO where, why it might be:\n%s\n%s\n", got, want)
+	for i := 0; i < len(pairs.Pairs); i++ {
+		got := slug(pairs.Pairs[i].In)
+		if got != pairs.Pairs[i].Out {
+			t.Errorf("result invalid TODO where, why it might be:\n%s\n%s\n", got, pairs.Pairs[i].Out)
+		}
 	}
 }
 
