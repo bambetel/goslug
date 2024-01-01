@@ -18,23 +18,19 @@ func reRule(r rune) rune {
 
 func slug(in string) string {
 	// 1) string operation without any translation
-	replacer := strings.NewReplacer("ß", "ss", "tak-zwany", "tzw") // TODO when???
+	replacer := strings.NewReplacer("ß", "ss", "tak zwany", "tzw") // TODO when???
 	res := []byte(strings.Map(reRule, replacer.Replace(strings.ToLower(string(in)))))
-	// strings.NewReplacer for more than one character
-	// todo stop-list (?)
 	// % only for escaping encoded characters - only before valid encoded symbols!
+	// replace % with %-encoded '%'
 	reSpace := regexp.MustCompile(`[\s\\\/?&#.,;:*!%]+`)
-	// reMinus := regexp.MustCompile(`-+`)
 	res = reSpace.ReplaceAll([]byte(res), []byte("-"))
-	// res = reMinus.ReplaceAll(res, []byte("-"))
-	//
-	reOther := regexp.MustCompile(`[^a-z0-9\-\+\%]`)
+	// TODO encode matched characters
+	reOther := regexp.MustCompile(`[^a-z0-9\-\+]`)
 	res = reOther.ReplaceAll(res, []byte("-"))
-	//
+
 	reTrim := regexp.MustCompile(`^-+|-+$`)
-	res = reTrim.ReplaceAll(res, nil)
 	reReduce := regexp.MustCompile(`-{2,}`)
-	res = reReduce.ReplaceAll(res, []byte("-"))
+	res = reReduce.ReplaceAll(reTrim.ReplaceAll(res, nil), []byte("-"))
 
 	return string(res)
 }
