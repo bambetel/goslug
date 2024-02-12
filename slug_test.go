@@ -33,7 +33,7 @@ func init() {
 
 func TestSlug(t *testing.T) {
 	for i := 0; i < len(pairs.Pairs); i++ {
-		got := slug(pairs.Pairs[i].In)
+		got := Slug(pairs.Pairs[i].In)
 		if got != pairs.Pairs[i].Out {
 			t.Errorf("result invalid TODO where, why it might be:\n%s\n%s\n", got, pairs.Pairs[i].Out)
 		}
@@ -43,7 +43,7 @@ func TestSlug(t *testing.T) {
 func TestSlugAuto(t *testing.T) {
 	data := []string{"testowe dane", "Łączność?!"}
 	for _, s := range data {
-		got := slug(s)
+		got := Slug(s)
 		if !IsValidSlug(got) {
 			t.Errorf("result invalid TODO where, why it might be:\n%s\n", got)
 		}
@@ -70,14 +70,14 @@ func TestSlugPercentEncoding(t *testing.T) {
 func BenchmarkSlug(b *testing.B) {
 	l := len(validPercentEncoded)
 	for i := 0; i < b.N; i++ {
-		slug(validPercentEncoded[i%l])
+		Slug(validPercentEncoded[i%l])
 	}
 }
 
 func FuzzSlug(f *testing.F) {
 	f.Add("test")
 	f.Fuzz(func(t *testing.T, s string) {
-		slug(s)
+		Slug(s)
 	})
 }
 

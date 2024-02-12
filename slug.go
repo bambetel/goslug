@@ -16,7 +16,7 @@ func reRule(r rune) rune {
 	return r
 }
 
-func slug(in string) string {
+func Slug(in string) string {
 	// 1) string operation without any translation
 	replacer := strings.NewReplacer("ß", "ss", "tak zwany", "tzw") // TODO when???
 	res := []byte(strings.Map(reRule, replacer.Replace(strings.ToLower(string(in)))))
