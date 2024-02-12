@@ -1,4 +1,4 @@
-package main
+package goslug
 
 import (
 	"encoding/json"
