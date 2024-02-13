@@ -14,11 +14,14 @@ type TestPair struct {
 	In  string `json:"in"`
 	Out string `json:"out"`
 }
+
 type TestPairs struct {
 	Pairs []TestPair `json:"pairs"`
 }
 
 var pairs TestPairs
+var pairsFileNameWin TestPairs
+var pairsFileNamePosix TestPairs
 
 func init() {
 	reValidSlug = regexp.MustCompile(`^([A-Za-z0-9\-\+.]*|\%[0-9A-F]{2,2})*$`)
@@ -29,6 +32,17 @@ func init() {
 	json.Unmarshal(fJsonPairs, &pairs)
 
 	// fmt.Printf("test file data:  %q", pairs)
+	fFileNameWin, err := os.ReadFile("testdata/file_win.json")
+	if err != nil {
+		_ = fmt.Errorf("Cannot load test data: file_win.json")
+	}
+	json.Unmarshal(fFileNameWin, &pairsFileNameWin)
+
+	fFileNamePosix, err := os.ReadFile("testdata/file_posix.json")
+	if err != nil {
+		panic("Cannot load test data: file_posix.json")
+	}
+	json.Unmarshal(fFileNamePosix, &pairsFileNamePosix)
 }
 
 func TestSlug(t *testing.T) {
@@ -90,4 +104,30 @@ func IsPrettySlug(s string) bool {
 		return false
 	}
 	return reValidSlug.Match(([]byte)(s))
+}
+
+func TestFilenameWin(t *testing.T) {
+	for i := 0; i < len(pairsFileNameWin.Pairs); i++ {
+		got := FileNameWin(pairsFileNameWin.Pairs[i].In)
+		if got != pairsFileNameWin.Pairs[i].Out {
+			t.Errorf("result invalid TODO where, why it might be:\n%s\n%s\n", got, pairsFileNameWin.Pairs[i].Out)
+		}
+	}
+}
+
+func TestFilenameWinNull(t *testing.T) {
+	got := FileNameWin("no\030_nulls\011.tx\000t")
+	expect := "no_nulls.txt"
+	if got != expect {
+		t.Errorf("result invalid TODO where, why it might be:\n%s (%d)\n%s (%d)\n", got, len(got), expect, len(expect))
+	}
+}
+
+func TestFilenamePosix(t *testing.T) {
+	for i := 0; i < len(pairsFileNamePosix.Pairs); i++ {
+		got := FileNameWin(pairsFileNamePosix.Pairs[i].In)
+		if got != pairsFileNamePosix.Pairs[i].Out {
+			t.Errorf("result invalid TODO where, why it might be:\n%s\n%s\n", got, pairsFileNamePosix.Pairs[i].Out)
+		}
+	}
 }

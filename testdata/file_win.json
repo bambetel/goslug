@@ -1,0 +1,7 @@
+{
+	"pairs" : [
+		{"in":"<filename>.<ext>", "out":"filename.ext"},
+		{"in":"c:\\windows\\system32\\virus.exe", "out":"cwindowssystem32virus.exe"},
+		{"in":"", "out":""}
+	]
+}
