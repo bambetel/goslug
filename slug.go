@@ -17,6 +17,7 @@ func reRule(r rune) rune {
 	return r
 }
 
+// URL-encoded slug
 func Slug(in string) string {
 	// 1) string operation without any translation
 	replacer := strings.NewReplacer("ß", "ss", "tak zwany", "tzw") // TODO when???
@@ -37,18 +38,42 @@ func Slug(in string) string {
 	return url.QueryEscape(string(res))
 }
 
+// C, Bash, PHP, GO - compatible variable name
+func Var(in string) string {
+	sb := strings.Builder{}
+	begin := true
+	for _, c := range in {
+		if isVarChar(c) {
+			if !(begin && '0' <= c && c <= '9') {
+				sb.WriteRune(c)
+				begin = false
+			}
+		}
+	}
+	return sb.String()
+}
+
+func isVarChar(c rune) bool {
+	if ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || ('0' <= c && c <= '9') || c == '_' {
+		return true
+	}
+	return false
+}
+
 var notAllowedWin = []rune{'<', '>', ':', '/', '\\', '|', '?', '*'}
 
+// Windows 32 filename
 func FileNameWin(in string) string {
 	sb := strings.Builder{}
 	for _, c := range in {
-		if c > 32 && sliceIndex(notAllowedWin, c) == -1 {
+		if c >= 32 && sliceIndex(notAllowedWin, c) == -1 {
 			sb.WriteRune(c)
 		}
 	}
 	return sb.String()
 }
 
+// POSIX compatible filename
 func FileNamePosix(in string) string {
 	sb := strings.Builder{}
 	for _, c := range in {
