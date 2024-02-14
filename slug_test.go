@@ -1,4 +1,4 @@
-package goslug
+package slug
 
 import (
 	"encoding/json"
